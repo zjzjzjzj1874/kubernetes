@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kms-v2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-demo
+  namespace: kms-v2
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: nginx-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-nginx-demo
+  namespace: kms-v2
+spec:
+  selector:
+    matchLabels:
+      app: nginx-demo
+  replicas: 1 # 副本数量
+  template:
+    metadata:
+      labels:
+        app: nginx-demo
+    spec:
+      containers:
+        - name: nginx-demo
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+      restartPolicy: Always
