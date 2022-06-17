@@ -34,6 +34,9 @@ spec:
       containers:
         - name: { container-name }
           image: { image-name }
+          command: [ "./access" ]
+          args: [ "-f","/app/etc/access.${ENV}.yaml" ]
+          # 启动参数,可以使用环境变量,也可以使用shell ==> args: ["-c", "while true; do echo hello; sleep 10;done"]
           ports:
             - containerPort: 80
       restartPolicy: Always
