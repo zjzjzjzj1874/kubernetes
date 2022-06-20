@@ -1,0 +1,21 @@
+// simple jenkinsfile test for my project
+pipeline {
+    agent any
+
+    options {
+        timestamps() // 显示日志时间戳 => 使用前先安装插件
+    }
+    stages {
+        stage('Hello') {
+            steps {
+                timeout(time: 1,unit:"MINUTES"){
+                    script{
+                        input id: '_confirm', message: '确认是否执行本次操作', ok: '是', parameters: [choice(choices: ['是', '否'], name: '_CONFIRM')], submitter: 'admin'
+                        echo 'Hello World'
+                    }
+                }
+
+            }
+        }
+    }
+}

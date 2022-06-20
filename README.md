@@ -29,13 +29,17 @@ kunernetes in zjzjzjzj1874's repo
 - 查看容器描述 `kubectl describe pod {pod-name}`
 - 查看日志 `kubectl logs -f {pod-name}`
 - 进入容器 `kubectl exec -it {pod-name} bash` or `kubectl exec -it {pod-name} sh`
-- 在容器中运行单个命令 
-  - 查看环境变量: `kubectl exec {pod-name} env` => 注:docker同理
-  - 查看进程 `kubectl exec {pod-name} ps aux` 
-  - 查看目录 `kubectl exec {pod-name} ls /` 
-  - 查看进程内容 `kubectl exec {pod-name} cat /proc/1/mounts` 
+- 在容器中运行单个命令
+    - 查看环境变量: `kubectl exec {pod-name} env` => 注:docker同理
+    - 查看进程 `kubectl exec {pod-name} ps aux`
+    - 查看目录 `kubectl exec {pod-name} ls /`
+    - 查看进程内容 `kubectl exec {pod-name} cat /proc/1/mounts`
 
 ## 端口转发port-forward
 
 - 容器端口转发 `kubectl port-forward pods/{pod-name} 8080:80`
 - 服务端口转发 `kubectl port-forward service/{service-name} 8080:80`
+
+## 推荐集群操作工具:
+
+- k9s
