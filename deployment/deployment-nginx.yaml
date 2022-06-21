@@ -25,7 +25,7 @@ spec:
   selector:
     matchLabels:
       app: nginx-demo
-  replicas: 1 # 副本数量
+  replicas: 2 # 副本数量
   template:
     metadata:
       labels:

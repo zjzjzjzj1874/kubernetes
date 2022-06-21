@@ -2,7 +2,11 @@
 
 kunernetes in zjzjzjzj1874's repo
 
+- [k8s基础教程-云原生](https://lib.jimmysong.io/kubernetes-handbook/)
 - [k8s命令行手册](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
+- [k8s资源类型](https://kubernetes.io/zh-cn/docs/reference/kubectl/#%E8%B5%84%E6%BA%90%E7%B1%BB%E5%9E%8B)
+- [k8s工作负载资源](https://kubernetes.io/docs/concepts/workloads/controllers/)
+- [k8s部署mysql](https://kubernetes.io/zh-cn/docs/tasks/run-application/run-replicated-stateful-application/#deploy-mysql)
 
 - 重启k3s `systemctl restart k3s`
 
@@ -16,6 +20,86 @@ kunernetes in zjzjzjzj1874's repo
 - 设置当前上下文(minikube为当前上下文) `kubectl config use-context minikube`
 - 设置命名空间 `kubectl config set-context --current --namespace={namespace}`
     - 切换命名空间 `kubectl config set-context --current --namespace=kube-public`
+
+## K8S常见资源类型
+
+- `nodes`: 节点,即k8s的工作节点
+- `namespaces`: 命名空间,主要用于隔离服务资源
+- `deployment`: 无状态部署清单,修改部署清单,可能会对正在运行的pod有影响
+- `replicaset`: 复制集,也是无状态的
+- `services`: 服务,deployment启动服务之后,对外提供服务即是一个service
+- [daemonset](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/daemonset/): 守护程序集,包括集群/日志收集/监控守护进程,注意:
+  删除daemonset会删除它创建的所有pod
+- `statefulset`: 有状态集,包括mysql和redis等,需要持久化存储的,他们删除或创建都是有序的,区别于deployment创建的无状态集
+- `pods`: k8s的最小调度单位,同一个pod中的容器将共享存储和网络,这些容器有亲和性,所以会被调度到同一个pod中
+- [ingress](https://jimmysong.io/kubernetes-handbook/concepts/ingress.html): 外部访问k8s集群内部服务的入口,即进入集群的流量一般由ingress分发;
+  K8S支持并维护GCE和Nginx两种,其他常见的Ingress Controller包括:Traefik,F5,Kong,Istio
+- 其他的不常用的:`configmaps/endpoints/events/secrets/serviceaccounts/cronjobs/jobs/roles...`
+
+## delete操作
+
+- 常用删除
+    - 删除部署清单 `kubectl delete deployment {deployment-name}`
+    - 删除命名空间 `kubectl delete namespace {namespace-name}`
+    - 删除pod `kubectl delete pod {pod-name}`
+    - 删除pod `kubectl delete pods {pod-name}`
+      部署如果是3个pod,那么delete一个之后,可能会很快起一个,因为deployment决定的
+      可以使用`kubectl edit deployment {deployment-name}`来改变副本数量
+    - 其他删除 `cronjob/configmap/ingress/job/node/pvc/svc/sa/secret/statefulset`
+
+## describe操作
+
+- 常用描述操作
+    - 查看节点描述 `kubectl describe node`,包括节点系统信息,命名空间负载等各种资源信息
+    - 查看ingress `kubectl describe ingress`
+    - 查看命名空间 `kubectl describe namespace`
+    - 查看pods描述 `kubectl describe pods (+ {pod-name})`
+    - 查看副本集描述 `kubectl describe replicaset`
+    - 查看服务描述 `kubectl describe svc`
+    - 查看有状态集描述 `kubectl describe statefulset`
+    - 查看其他资源 `daemonset/configmap/pvc/secret/sa(=serviceAccount)...`
+
+## edit操作
+
+- 常用编辑操作
+    - 编辑节点 `kubectl edit node`
+    - 编辑命名空间 `kubectl edit namespace {namespace-name}`
+    - 编辑部署 `kubectl edit deployment {deployment-name}`,常用于临时修改镜像,副本数量等
+    - 编辑pods `kubectl edit pods {pods-name}`
+    - 编辑有状态集 `kubectl edit statefulset {name}`
+    - 编辑复制集 `kubectl edit replicaset {name}`
+    - 编辑其他资源 `cronjob/configmap/daemonset/ingress/job/pvc/svc...`
+- 如果想生产yaml的部署文件,也可以使用对应的`edit`查看生产的yaml文件
+
+## get操作
+
+- 查看所有
+    - 当前命名空间下:`kubectl get all` => 包括(pods/deployment/service/replicaset/statefulset等)
+    - 本node所有命名空间:`kubectl get all --all-namespaces` => 包括(pods/deployment/service/replicaset/statefulset等)
+    - 注:`--all-namespaces == -A`,所以上面命令 == `kubectl get all -A`,下同
+- 查看所有configmap
+    - 当前命名空间下:`kubectl get configmaps`
+    - 本node所有命名空间:`kubectl get configmaps -A`
+- 查看所有部署
+    - 当前命名空间下:`kubectl get deployment`
+    - 本node所有命名空间:`kubectl get deployment -A`
+- 查看所有pods
+    - 当前命名空间下:`kubectl get pods`
+    - 本node所有命名空间:`kubectl get pods -A (-o wide)`
+- 其他资源查看
+    - `cronjob/daemonset/ingress/job/nodes/namespaces/pvc/svc/replicaset/statefulset/secret`
+- `-o`:查看更多信息
+    - `wide`: 输出更多信息
+    - `json`: 以json格式输出
+    - `yaml`: 以yaml格式输出
+
+## exec操作
+
+- 进入pod `kubectl exec -it {pod-name} bash`
+- 不进入pods打印环境变量 `kubectl exec {pod-name} env`
+- 不进入pod查看根目录文件结构 `kubectl exec {pod-name} ls /`
+- 查看进程 `kubectl exec {pod-name} ps aux`
+- 查看进程内容 `kubectl exec {pod-name} cat /proc/1/mounts`
 
 ## 命名空间-namespace
 
@@ -46,20 +130,26 @@ kunernetes in zjzjzjzj1874's repo
     - 查看目录 `kubectl exec {pod-name} ls /`
     - 查看进程内容 `kubectl exec {pod-name} cat /proc/1/mounts`
 
-## 端口转发port-forward
+## 其他常用操作
+
+### 端口转发port-forward
 
 - 容器端口转发 `kubectl port-forward pods/{pod-name} 8080:80`
 - 服务端口转发 `kubectl port-forward service/{service-name} 8080:80`
 
-## delete操作
+### 日志查看
 
-- 常用删除
-    - 删除部署清单 `kubectl delete deployment {deployment-name}`
-    - 删除命名空间 `kubectl delete namespace {namespace-name}`
-    - 删除pod `kubectl delete pod {pod-name}`
-    - 删除pod `kubectl delete pods {pod-name}` => 部署如果是3个pod,那么delete一个之后,可能会很快起一个,因为deployment决定的
-    - 其他删除 `cronjob/configmap/ingress/job/node/pvc/svc/sa/secret/statefulset`
+- 查看单个容器日志:`kubectl logs (-f) {pods-name}`
+- 查看所有标签`app=nginx-demo`的容器日志:`kubectl logs -l app=nginx-demo --all-containers=true`
+- 查看所有标签`app=nginx-demo`的容器日志:`kubectl logs -l app=nginx-demo --all-containers=true`
+- 查看容器一个小时前:`kubectl logs --since=1h {pod-name}`
+
+### scale(针对deployment和statefulset)
+
+- 将部署集deployment-nginx副本设置为3:`kubectl scale --replicas=3 deployment/deployment-nginx`
+- 如果部署集deployment-nginx副本为1,那么将其副本设置为2:`kubectl scale --current-replicas=1 --replicas=2 deployment/deployment-nginx`
+- statefulset同理
 
 ## 推荐集群操作工具:
 
-- k9s
+- [k9s](https://github.com/derailed/k9s):解放命令行操作神器

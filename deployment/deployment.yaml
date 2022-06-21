@@ -28,8 +28,9 @@ spec:
   replicas: 2 # 副本数量
   template:
     metadata:
-      labels:
-        app: { deployment-name }
+      labels: # 为pod打标签,方便筛选
+        app: { deployment-name } # app名称
+        env: { env } # 属于哪个环境 dev/test/pre/pro
     spec:
       containers:
         - name: { container-name }
