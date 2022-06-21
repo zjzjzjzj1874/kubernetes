@@ -6,6 +6,17 @@ kunernetes in zjzjzjzj1874's repo
 
 - 重启k3s `systemctl restart k3s`
 
+## config-context(主要用于对多集群的访问)
+
+- 查看上下文配置
+    - 查看所有=>(也可用于合并config) `kubectl config view`
+    - 查看当前上下文配置 `kubectl config view --minify`
+- 查看当前所处上下文 `kubectl config current-context`
+- 查看上下文列表 `kubectl config get-contexts`
+- 设置当前上下文(minikube为当前上下文) `kubectl config use-context minikube`
+- 设置命名空间 `kubectl config set-context --current --namespace={namespace}`
+    - 切换命名空间 `kubectl config set-context --current --namespace=kube-public`
+
 ## 命名空间-namespace
 
 - 创建命名空间 `kubectl create namespace kms-v2`
@@ -39,6 +50,15 @@ kunernetes in zjzjzjzj1874's repo
 
 - 容器端口转发 `kubectl port-forward pods/{pod-name} 8080:80`
 - 服务端口转发 `kubectl port-forward service/{service-name} 8080:80`
+
+## delete操作
+
+- 常用删除
+    - 删除部署清单 `kubectl delete deployment {deployment-name}`
+    - 删除命名空间 `kubectl delete namespace {namespace-name}`
+    - 删除pod `kubectl delete pod {pod-name}`
+    - 删除pod `kubectl delete pods {pod-name}` => 部署如果是3个pod,那么delete一个之后,可能会很快起一个,因为deployment决定的
+    - 其他删除 `cronjob/configmap/ingress/job/node/pvc/svc/sa/secret/statefulset`
 
 ## 推荐集群操作工具:
 
