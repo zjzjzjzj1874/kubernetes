@@ -6,7 +6,7 @@ kunernetes in zjzjzjzj1874's repo
 
 - 容器化:目前我们CI/CD使用Jenkins+Docker;已经实现容器化部署,具备使用K8S的必要条件;
 - 可靠性:docker-compose启动和停止服务会存在服务短暂暂停(类似STW),如果本次发布有异常,则服务暂停时间会更长;K8S的部署是先启动再停止,则能够规避这个问题;
-- 高效利用资源:护架和通审的环境分开发,测试,预发布和生产,开发测试预发布负载很低,会存在资源浪费;基于k8s的namespace来区分环境,可以节约部分资源;
+- 高效利用资源:当前环境分开发,测试,预发布和生产,开发测试预发布负载很低,会存在资源浪费;基于k8s的namespace来区分环境,可以节约部分资源;
 - 自动缩放功能:当服务负载升高时,K8S会自动创建一批新的pods以适应当前需求;若负载下降则会自动缩减pods数量;
 - 总之:Kubernetes 使得应用的启动、迁移、部署变得即简单又安全,不必担心应用迁移后工作出现问题，也不用担心一台服务器无法应付突发的用户量。
 
@@ -14,6 +14,7 @@ kunernetes in zjzjzjzj1874's repo
 
 - [k8s基础教程-云原生](https://lib.jimmysong.io/kubernetes-handbook/)
 - [k8s命令行手册](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
+- [k8s APIs和CLIs的设计文档](http://kubernetes.kansea.com/docs/user-guide/kubectl/kubectl/)
 - [k8s资源类型](https://kubernetes.io/zh-cn/docs/reference/kubectl/#%E8%B5%84%E6%BA%90%E7%B1%BB%E5%9E%8B)
 - [k8s工作负载资源](https://kubernetes.io/docs/concepts/workloads/controllers/)
 - [k8s部署mysql](https://kubernetes.io/zh-cn/docs/tasks/run-application/run-replicated-stateful-application/#deploy-mysql)

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+spec:
+  serviceName: rabbitmq                             # headless service的名称
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: mid-rabbitmq
+          image: rabbitmq:3.8-management
+          env:
+            - name: RABBITMQ_DEFAULT_VHOST
+              value: "/"
+            - name: RABBITMQ_DEFAULT_USER
+              value: "admin1"
+            - name: RABBITMQ_DEFAULT_PASS
+              value: "admin1"
+          volumeMounts: # Pod挂载的存储
+            - name: data
+              mountPath: /var/lib/rabbitmq     # 将容器的/var/lib/rabbitmq目录挂载出来
+      imagePullSecrets:
+        - name: default-secret
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: csi-nas                   # 持久化存储的类型

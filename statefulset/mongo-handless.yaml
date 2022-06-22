@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service       # 对象类型为Service
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+spec:
+  ports:
+    - name: mongo     # Pod间通信的端口名称
+      port: 27017        # Pod间通信的端口号
+  selector:
+    app: mongo        # 选择标签为app:mongo的Pod
+  clusterIP: None     # 必须设置为None，表示Headless Service

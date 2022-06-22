@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  serviceName: mongo                             # headless service的名称
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mid-mongo
+          image: mongo
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "root"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "example"
+          volumeMounts: # Pod挂载的存储
+            - name: data
+              mountPath: /etc/mongo     # 将容器的/etc/mongo目录挂载出来
+      imagePullSecrets:
+        - name: default-secret
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: csi-nas                   # 持久化存储的类型

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service       # 对象类型为Service
+metadata:
+  name: etcd
+  labels:
+    app: etcd
+spec:
+  ports:
+    - name: etcd     # Pod间通信的端口名称
+      port: 2379        # Pod间通信的端口号
+    - name: etcd-1     # Pod间通信的端口名称
+      port: 2380        # Pod间通信的端口号
+  selector:
+    app: etcd        # 选择标签为app:etcd的Pod
+  clusterIP: None     # 必须设置为None，表示Headless Service

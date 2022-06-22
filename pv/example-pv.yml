@@ -1,3 +1,4 @@
+# PV && PVC && StorageClass 请参考:https://support.huaweicloud.com/basics-cce/kubernetes_0030.html#section4
 apiVersion: v1
 kind: PersistentVolume
 metadata:

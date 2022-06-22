@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: redis                             # headless service的名称
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - image: mysql
+          name: mid-mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root"
+          volumeMounts: # Pod挂载的存储
+            - name: data
+              mountPath: /var/lib/mysql     # 将容器的/data目录挂载出来
+            - name: log
+              mountPath: /logs     # 将容器的/data目录挂载出来
+      imagePullSecrets:
+        - name: default-secret
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: csi-nas                   # 持久化存储的类型
