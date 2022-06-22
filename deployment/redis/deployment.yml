@@ -1,22 +1,22 @@
-# 部署模板
+# redis部署清单
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{deployment-name}}
+  name: redis
   namespace: kms-v2
 spec:
   selector:
     matchLabels:
-      app: {{container-name}}
-  replicas: 1
+      app: redis
+  replicas: 2
   template:
     metadata:
       labels:
-        app: {{container-name}}
+        app: redis
     spec:
       containers:
-        - name: {{container-name}}
-          image: {{image}}
+        - name: redis
+          image: redis:latest
           ports:
             - containerPort: 80
       restartPolicy: Always

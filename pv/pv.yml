@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-zjzj
+spec:
+  accessModes:
+    - ReadWriteMany                      # 读写模式
+  capacity:
+    storage: 10Gi                      # 定义PV的大小
+  csi:
+    driver: nas.csi.everest.io         # 声明使用的驱动
+    fsType: nfs                        # 存储类型
+    volumeAttributes:
+      everest.io/share-export-location: sfs-nas01.cn-north-4b.myhuaweicloud.com:/share-96314776   # 挂载地址
+    volumeHandle: 68e4a4fd-d759-444b-8265-20dc66c8c502                                            # 存储ID

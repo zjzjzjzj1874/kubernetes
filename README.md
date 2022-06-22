@@ -17,6 +17,8 @@ kunernetes in zjzjzjzj1874's repo
 - [k8s资源类型](https://kubernetes.io/zh-cn/docs/reference/kubectl/#%E8%B5%84%E6%BA%90%E7%B1%BB%E5%9E%8B)
 - [k8s工作负载资源](https://kubernetes.io/docs/concepts/workloads/controllers/)
 - [k8s部署mysql](https://kubernetes.io/zh-cn/docs/tasks/run-application/run-replicated-stateful-application/#deploy-mysql)
+- [helm Docs](https://helm.sh/docs/)
+- [helm Tutorial](https://helm.sh/docs/intro/)
 
 ## config-context(主要用于对多集群的访问)
 
@@ -161,3 +163,12 @@ kunernetes in zjzjzjzj1874's repo
 ## 推荐集群操作工具:
 
 - [k9s](https://github.com/derailed/k9s):解放命令行操作神器
+- [helm](https://helm.sh/docs/):K8S包管理工具,CNCF毕业项目
+    - 安装: `brew install helm`
+    - 初始化Helm Chart存储库:`helm repo add bitnami https://charts.bitnami.com/bitnami`
+    - 查找bitnami库中的可用图表:`helm search repo bitnami`
+    - 更新helm的repo: `helm repo update`
+    - helm启动etcd:`helm install bitnami/etcd --generate-name`
+    - 查看helm安装的服务: `helm list`
+    - 卸载helm安装的服务: `helm uninstall etcd-1612624192`
+    - 更多请查看官方文档

@@ -1,0 +1,12 @@
+# 使用storageClass创建pvc => pv自动创建,pvc被删除后,pv也会被删除
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-sfs-auto-example
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: csi-nas        # StorageClass
