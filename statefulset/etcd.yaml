@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service       # 对象类型为Service
+metadata:
+  name: etcd
+  labels:
+    app: etcd
+spec:
+  ports:
+    - name: etcd     # Pod间通信的端口名称
+      port: 2379        # Pod间通信的端口号
+    - name: etcd-1     # Pod间通信的端口名称
+      port: 2380        # Pod间通信的端口号
+  selector:
+    app: etcd        # 选择标签为app:etcd的Pod
+  clusterIP: None     # 必须设置为None，表示Headless Service
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: etcd
+spec:
+  serviceName: etcd                             # headless service的名称
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etcd
+  template:
+    metadata:
+      labels:
+        app: etcd
+    spec:
+      containers:
+        - name: mid-etcd
+          image: bitnami/etcd
+          env:
+            - name: ALLOW_NONE_AUTHENTICATION
+              value: "yes"
+          volumeMounts: # Pod挂载的存储
+            - name: data
+              mountPath: /bitnami/etcd     # 将容器的/bitnami/etcd目录挂载出来
+      imagePullSecrets:
+        - name: default-secret
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: csi-nas                   # 持久化存储的类型

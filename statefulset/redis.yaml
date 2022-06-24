@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service       # 对象类型为Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  ports:
+    - name: redis     # Pod间通信的端口名称
+      port: 6379        # Pod间通信的端口号
+  selector:
+    app: redis        # 选择标签为app:redis的Pod
+  clusterIP: None     # 必须设置为None，表示Headless Service
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  serviceName: redis                             # headless service的名称
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: mid-redis
+          image: redis
+          volumeMounts: # Pod挂载的存储
+            - name: data
+              mountPath: /data     # 将容器的/data目录挂载出来
+      imagePullSecrets:
+        - name: default-secret
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: csi-nas                   # 持久化存储的类型

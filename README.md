@@ -1,7 +1,5 @@
 # kubernetes
 
-kunernetes in zjzjzjzj1874's repo
-
 ## 为什么使用K8S
 
 - 容器化:目前我们CI/CD使用Jenkins+Docker;已经实现容器化部署,具备使用K8S的必要条件;
@@ -12,6 +10,8 @@ kunernetes in zjzjzjzj1874's repo
 
 ## K8S参考资料
 
+- [how to install minikube](https://jimmysong.io/kubernetes-handbook/develop/minikube.html)
+- [Minikube Tutorial](https://kubernetes.io/zh-cn/docs/tutorials/hello-minikube/)
 - [k8s基础教程-云原生](https://lib.jimmysong.io/kubernetes-handbook/)
 - [k8s命令行手册](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-strong-getting-started-strong-)
 - [k8s APIs和CLIs的设计文档](http://kubernetes.kansea.com/docs/user-guide/kubectl/kubectl/)
@@ -21,16 +21,33 @@ kunernetes in zjzjzjzj1874's repo
 - [helm Docs](https://helm.sh/docs/)
 - [helm Tutorial](https://helm.sh/docs/intro/)
 
+## how to run a pod with k8s
+
+- start with pod
+    - run with pod: `kubectl run nginx --image=nginx`
+    - try run without start: `kubectl run nginx --image=nginx --dry-run=client`
+    - try run without start but output yaml: `kubectl run nginx --image=nginx --dry-run=client -o yaml`
+- start with deployment
+    - run with deployment: `kubectl create deployment nginx --image=nginx --replicas=2`
+    - try run without start: `kubectl create deployment nginx --image=nginx --replicas=2 --dry-run=client`
+    - try run without start but output
+      yaml: `kubectl create deployment nginx --image=nginx --replicas=2 --dry-run=client -o yaml`
+
+## how to upgrade a deployment image
+
+- example with nginx: `kubectl set image deployment/nginx nginx=nginx:1.19`
+- record in k8s(convenient for rollback): `kubectl set image deployment/nginx nginx=nginx:1.19 --record`
+
 ## config-context(主要用于对多集群的访问)
 
-- 查看上下文配置
-    - 查看所有=>(也可用于合并config) `kubectl config view`
-    - 查看当前上下文配置 `kubectl config view --minify`
-- 查看当前所处上下文 `kubectl config current-context`
-- 查看上下文列表 `kubectl config get-contexts`
-- 设置当前上下文(minikube为当前上下文) `kubectl config use-context minikube`
-- 设置命名空间 `kubectl config set-context --current --namespace={namespace}`
-    - 切换命名空间 `kubectl config set-context --current --namespace=kube-public`
+- context
+    - show all context=>(也可用于合并config) `kubectl config view`
+    - show current context config `kubectl config view --minify`
+    - show current context `kubectl config current-context`
+    - show current context list `kubectl config get-contexts`
+    - set current context `kubectl config use-context minikube`
+    - set current namespace `kubectl config set-context --current --namespace={namespace}`
+    - switch namespace from now to xx `kubectl config set-context --current --namespace=kube-public`
 
 ## K8S常见资源类型
 
@@ -49,57 +66,58 @@ kunernetes in zjzjzjzj1874's repo
 
 ## delete操作
 
-- 常用删除
-    - 删除部署清单 `kubectl delete deployment {deployment-name}`
-    - 删除命名空间 `kubectl delete namespace {namespace-name}`
-    - 删除pod `kubectl delete pod {pod-name}`
-    - 删除pod `kubectl delete pods {pod-name}`
-      部署如果是3个pod,那么delete一个之后,可能会很快起一个,因为deployment决定的
+- mostly use
+    - delete deployment `kubectl delete deployment {deployment-name}`
+    - delete ns `kubectl delete namespace {namespace-name}` equal `kubectl delete ns {namespaec-name}`
+    - delete pod `kubectl delete pod(s) {pod-name}`
+    - note:部署如果是3个pod,那么delete一个之后,可能会很快起一个,因为deployment决定的
       可以使用`kubectl edit deployment {deployment-name}`来改变副本数量
-    - 其他删除 `cronjob/configmap/ingress/job/node/pvc/svc/sa/secret/statefulset`
+- delete other resource: `cronjob/configmap/ingress/job/node/pvc/svc/sa/secret/statefulset`
 
 ## describe操作
 
-- 常用描述操作
-    - 查看节点描述 `kubectl describe node`,包括节点系统信息,命名空间负载等各种资源信息
-    - 查看ingress `kubectl describe ingress`
-    - 查看命名空间 `kubectl describe namespace`
-    - 查看pods描述 `kubectl describe pods (+ {pod-name})`
-    - 查看副本集描述 `kubectl describe replicaset`
-    - 查看服务描述 `kubectl describe svc`
-    - 查看有状态集描述 `kubectl describe statefulset`
-    - 查看其他资源 `daemonset/configmap/pvc/secret/sa(=serviceAccount)...`
+- mostly use
+    - node `kubectl describe node`,including system info,ns && many other load...
+    - ingress `kubectl describe ingress`
+    - ns `kubectl describe namespace`
+    - pods `kubectl describe pods (+ {pod-name})`
+    - replicaset(副本集) `kubectl describe replicaset`
+    - service `kubectl describe svc`
+    - statefulset(有状态集) `kubectl describe statefulset`
+- describe other resource `daemonset/configmap/pvc/secret/sa(=serviceAccount)...`
 
 ## edit操作
 
-- 常用编辑操作
-    - 编辑节点 `kubectl edit node`
-    - 编辑命名空间 `kubectl edit namespace {namespace-name}`
-    - 编辑部署 `kubectl edit deployment {deployment-name}`,常用于临时修改镜像,副本数量等
-    - 编辑pods `kubectl edit pods {pods-name}`
-    - 编辑有状态集 `kubectl edit statefulset {name}`
-    - 编辑复制集 `kubectl edit replicaset {name}`
-    - 编辑其他资源 `cronjob/configmap/daemonset/ingress/job/pvc/svc...`
-- 如果想生产yaml的部署文件,也可以使用对应的`edit`查看生产的yaml文件
+- mostly use
+    - node `kubectl edit node`
+    - ns `kubectl edit namespace {namespace-name}`
+    - deployment `kubectl edit deployment {deployment-name}`,常用于临时修改镜像,副本数量等
+    - pods `kubectl edit pods {pods-name}`
+    - statefulset(有状态集) `kubectl edit statefulset {name}`
+    - replicaset(副本集) `kubectl edit replicaset {name}`
+    - edit others `cronjob/configmap/daemonset/ingress/job/pvc/svc...`
+- 如果想生成yaml的部署文件,也可以使用对应的`edit`查看生产的yaml文件 `k edit deployment {dp-name}`,you'll see
 
 ## get操作
 
-- 查看所有
-    - 当前命名空间下:`kubectl get all` => 包括(pods/deployment/service/replicaset/statefulset等)
-    - 本node所有命名空间:`kubectl get all --all-namespaces` => 包括(pods/deployment/service/replicaset/statefulset等)
-    - 注:`--all-namespaces == -A`,所以上面命令 == `kubectl get all -A`,下同
-- 查看所有configmap
-    - 当前命名空间下:`kubectl get configmaps`
-    - 本node所有命名空间:`kubectl get configmaps -A`
-- 查看所有部署
-    - 当前命名空间下:`kubectl get deployment`
-    - 本node所有命名空间:`kubectl get deployment -A`
-- 查看所有pods
-    - 当前命名空间下:`kubectl get pods`
-    - 本node所有命名空间:`kubectl get pods -A (-o wide)`
-- 其他资源查看
+- get all
+    - get all resource in current ns:`kubectl get all` => including(pods/deployment/service/replicaset/statefulset..)
+    - get all ns in current node:`kubectl get all --all-namespaces` => including(
+      pods/deployment/service/replicaset/statefulset..)
+    - note:`--all-namespaces == -A` == `kubectl get all -A`,下同
+- get all configmap
+    - in current ns:`kubectl get configmaps`
+    - in all ns:`kubectl get configmaps -A`
+- deployment
+    - in current ns:`kubectl get deployment`
+    - in all ns:`kubectl get deployment -A`
+- pods
+    - in current ns:`kubectl get pods`
+    - in all ns:`kubectl get pods -A (-o wide)`
+    - watching pod status:`kubectl get pods -w`
+- others
     - `cronjob/daemonset/ingress/job/nodes/namespaces/pvc/svc/replicaset/statefulset/secret`
-- `-o`:查看更多信息
+- `-o`:more info
     - `wide`: 输出更多信息
     - `json`: 以json格式输出
     - `yaml`: 以yaml格式输出
