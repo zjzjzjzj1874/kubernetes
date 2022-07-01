@@ -36,7 +36,7 @@ spec:
           volumeMounts: # Pod挂载的存储
             - name: data
               mountPath: /var/lib/mysql     # 将容器的/data目录挂载出来
-            - name: log
+            - name: data
               mountPath: /logs     # 将容器的/data目录挂载出来
       imagePullSecrets:
         - name: default-secret
