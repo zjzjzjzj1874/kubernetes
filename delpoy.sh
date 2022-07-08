@@ -68,8 +68,8 @@ regen_configmap() {
   IFS=${oldIfs} # 恢复默认的分割
 }
 
-# 部署scana的业务服务,todo 支持所有服务同时发或一个服务单独发
-deployment_scana_svc() {
+# 部署业务服务,todo 支持所有服务同时发或一个服务单独发
+deployment_business_svc() {
   files=$(ls | grep ".yaml")
 
   for file in ${files}; do
@@ -79,4 +79,4 @@ deployment_scana_svc() {
 
 ns_image_replace "$1" "$2" # 调用命名空间替换方法
 #regen_configmap "$1"       # 替换configmap TODO 配置文件不在这个项目中,所以这个方法不调用
-deployment_scana_svc # 重新部署业务服务
+deployment_business_svc # 重新部署业务服务
