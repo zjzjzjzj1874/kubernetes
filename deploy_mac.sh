@@ -5,7 +5,7 @@
 
 # 替换部署文件的命名空间
 # shellcheck disable=SC2120
-ns_image_replace_mac() {
+ns_image_replace() {
 
   # 命名空间使用传入变量
   ns=$1
@@ -36,6 +36,6 @@ ns_image_replace_mac() {
   echo "替换完成"
 }
 
-ns_image_replace_mac "$1" "$2" # 调用命名空间替换方法
+ns_image_replace "$1" "$2" # 调用命名空间替换方法
 regen_configmap "$1"       # 替换configmap TODO 配置文件不在这个项目中,所以这个方法不调用
-deployment_business_svc # 重新部署业务服务
+deployment_business_svc    # 重新部署业务服务

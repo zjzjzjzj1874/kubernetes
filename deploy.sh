@@ -50,7 +50,7 @@ regen_configmap() {
 
   # 查找当前文件夹中所有k8s配置文件
   #  files=$(ls -R . | grep ".k8s.yaml")
-  files=$(find "$PWD" | xargs ls -ld | grep ".k8s.yaml") # 查找所有k8s的配置文件,以后如果需要k8s部署,那么grep将会替换为{{dev}}.yaml,不同的分支用不同的配置
+  files=$(find "$PWD" | xargs ls -d | grep ".k8s.yaml") # 查找所有k8s的配置文件,以后如果需要k8s部署,那么grep将会替换为{{dev}}.yaml,不同的分支用不同的配置
 
   oldIfs=$IFS
   IFS=$'\n'
@@ -59,8 +59,6 @@ regen_configmap() {
     name=${file##*/}
     name="conf-${name%%.*}" # 截取configmap的名字
     echo "重新生成configmap文件名 ${name}"
-
-    file="/${file#*/}" # 文件绝对路径获取
 
     kubectl delete configmap -n "${ns}" "${name}"                       # 删除原来configmap
     kubectl create configmap -n "${ns}" "${name}" --from-file="${file}" # 创建新的configmap
