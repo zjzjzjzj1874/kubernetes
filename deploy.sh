@@ -21,7 +21,7 @@ ns_image_replace() {
 
   echo " ================= 命名空间:${ns},镜像Tag:${tag} ================"
 
-  cd ./deployment/my-zero # TODO 服务器脚本中替换目录
+  cd ./deployment/my-zero || exit
 
   files=$(ls | grep ".yaml")
 
@@ -45,7 +45,7 @@ regen_configmap() {
     exit 1
   fi
 
-  cd ../../.. # TODO 服务器脚本中替换目录
+  cd ./deployment/my-zero || exit
   pwd
 
   # 查找当前文件夹中所有k8s配置文件
@@ -76,7 +76,3 @@ deployment_business_svc() {
     kubectl apply -f "${file}"
   done
 }
-
-ns_image_replace "$1" "$2" # 调用命名空间替换方法
-#regen_configmap "$1"       # 替换configmap TODO 配置文件不在这个项目中,所以这个方法不调用
-deployment_business_svc # 重新部署业务服务
