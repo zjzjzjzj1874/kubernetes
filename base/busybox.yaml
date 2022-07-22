@@ -1,0 +1,16 @@
+# why busybox:run busybox,add curl or ping other pod to test whether network is ok
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  containers:
+    - name: busybox
+      image: busybox:latest
+      command:
+        - sleep
+        - "3600"
+      imagePullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: default-secret # 镜像拉取密钥,如果是私有仓库
+  restartPolicy: Always
