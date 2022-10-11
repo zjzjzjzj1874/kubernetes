@@ -1,0 +1,75 @@
+metadata:
+  name: test
+  namespace: test-dev
+  uid: 2123-c989-471c-8ae0-37b701ca
+  resourceVersion: '111'
+  generation: 24
+  creationTimestamp: '2022-09-22T02:17:54Z'
+  annotations:
+    kubernetes.io/elb.class: union
+    kubernetes.io/elb.id: 232-123-323-23-3231
+    kubernetes.io/elb.port: '80'
+    kubernetes.io/ingress.class: cce
+  managedFields:
+    - manager: Go-http-client
+      operation: Update
+      apiVersion: networking.k8s.io/v1beta1
+      time: '2022-09-22T02:17:53Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:kubernetes.io/elb.class: {}
+            f:kubernetes.io/elb.id: {}
+            f:kubernetes.io/elb.port: {}
+            f:kubernetes.io/ingress.class: {}
+        f:spec:
+          f:rules: {}
+    - manager: ingress-controller
+      operation: Update
+      apiVersion: extensions/v1beta1
+      time: '2022-09-22T02:17:54Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:status:
+          f:loadBalancer:
+            f:ingress: {}
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /api/a
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: a-svr
+              servicePort: 80
+            property:
+              ingress.beta.kubernetes.io/url-match-mode: EQUAL_TO
+          - path: /api/b
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: b-svr
+              servicePort: 80
+            property:
+              ingress.beta.kubernetes.io/url-match-mode: EQUAL_TO
+          - path: /api/c
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: c-svr
+              servicePort: 80
+            property:
+              ingress.beta.kubernetes.io/url-match-mode: EQUAL_TO
+          - path: /api/d
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: d-svr
+              servicePort: 80
+            property:
+              ingress.beta.kubernetes.io/url-match-mode: EQUAL_TO
+status:
+  loadBalancer:
+    ingress:
+      - ip: 10.0.0.1
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
