@@ -17,6 +17,10 @@ spec:
         app: deployment-my-zero
     spec:
       serviceAccountName: find-endpoints
+      hostAliases: # Pay Your Attention => 启动容器,如果需要修改容器的hosts,可以添加hostAliases  : docker-compose中可以使用extra_hosts
+        - ip: "10.0.0.1"
+          hostnames:
+            - "www.baidu.com"
       containers:
         - name: deployment-my-zero
           image: my-zero:latest
