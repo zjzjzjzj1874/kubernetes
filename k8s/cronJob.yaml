@@ -1,0 +1,17 @@
+# k8s运行一个cron job
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hello
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: hello # 任务名称
+              image: my-zero:v1 # 镜像
+              args:
+                - hello
+          restartPolicy: OnFailure
