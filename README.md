@@ -56,7 +56,7 @@
 - `deployment`: 无状态部署清单,修改部署清单,可能会对正在运行的pod有影响
 - `replicaset`: 复制集,也是无状态的
 - `services`: 服务,deployment启动服务之后,对外提供服务即是一个service
-- [daemonset](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/daemonset/): 守护程序集,包括集群/日志收集/监控守护进程,注意:
+- [daemonset](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/daemonset/): 守护程序集,它在集群的每个节点上运行一个Pod,且保证只有一个Pod,非常适合日志收集/资源监控等,注意:
   删除daemonset会删除它创建的所有pod
 - `statefulset`: 有状态集,包括mysql和redis等,需要持久化存储的,他们删除或创建都是有序的,区别于deployment创建的无状态集
 - `pods`: k8s的最小调度单位,同一个pod中的容器将共享存储和网络,这些容器有亲和性,所以会被调度到同一个pod中
