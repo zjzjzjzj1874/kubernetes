@@ -181,6 +181,7 @@
 
 ## 推荐集群操作工具:
 
+- [lens](https://k8slens.dev/):多集群管理
 - [k9s](https://github.com/derailed/k9s):解放命令行操作神器
 - [helm](https://helm.sh/docs/):K8S包管理工具,CNCF毕业项目
     - 安装: `brew install helm`
