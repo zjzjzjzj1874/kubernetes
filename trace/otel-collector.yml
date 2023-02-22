@@ -170,7 +170,7 @@ spec:
     matchLabels:
       app: opentelemetry
       component: otel-collector
-  minReadySeconds: 10
+  minReadySeconds: 5 # 新的pod启动之后,等待多久(单位:s)把旧的容器销毁
   progressDeadlineSeconds: 120
   replicas: 1
   template:
