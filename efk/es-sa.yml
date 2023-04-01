@@ -1,0 +1,34 @@
+#创建账号 角色权限,用于rpc服务发现时,对于endpoint有get/list和watch的权限
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: devops
+  name: es-sa
+
+---
+#创建角色对应操作
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  namespace: devops
+  name: curd-es
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "endpoints" ]
+    verbs: [ "get","list","watch","post","put" ]
+
+---
+#给账号绑定角色
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  namespace: devops
+  name: es-sa-curd-es
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: curd-es
+subjects:
+  - kind: ServiceAccount
+    name: es-sa
+    namespace: devops

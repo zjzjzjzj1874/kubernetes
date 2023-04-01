@@ -1,0 +1,56 @@
+# kibana-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: devops
+  name: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: kibana:8.6.2
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: "http://elasticsearch:9200"
+          ports:
+            - containerPort: 5601
+              name: http
+#          readinessProbe:
+#            httpGet:
+#              path: /api/status
+#              port: http
+#            initialDelaySeconds: 10
+#            periodSeconds: 5
+#          livenessProbe:
+#            httpGet:
+#              path: /api/status
+#              port: http
+#            initialDelaySeconds: 10
+#            periodSeconds: 30
+
+---
+# kibana-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: devops
+  name: kibana
+  labels:
+    app: kibana
+spec:
+  selector:
+    app: kibana
+  ports:
+    - name: http
+      port: 5601
+      protocol: TCP
+#  type: ClusterIP # 集群内访问
+  type: NodePort # 节点访问

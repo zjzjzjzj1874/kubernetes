@@ -1,0 +1,110 @@
+# configMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch-config
+  namespace: devops
+data:
+  elasticsearch.yml: |
+    cluster.name: my-es-cluster
+    node.name: ${HOSTNAME}
+    network.host: 0.0.0.0
+    discovery.seed_hosts: elasticsearch-0.elasticsearch,elasticsearch-1.elasticsearch,elasticsearch-2.elasticsearch
+    cluster.initial_master_nodes: elasticsearch-0,elasticsearch-1,elasticsearch-2
+    xpack.security.authc.api_key.enabled: true
+    xpack.security.enabled: false
+    
+
+---
+# es-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: devops
+  name: elasticsearch
+  labels:
+    app: elasticsearch
+spec:
+  selector:
+    app: elasticsearch
+  ports:
+    - name: http
+      port: 9200
+      protocol: TCP
+    - name: transport
+      port: 9300
+      protocol: TCP
+  type: ClusterIP
+
+---
+# es-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: devops
+  name: elasticsearch
+spec:
+  serviceName: elasticsearch
+  replicas: 3
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      serviceAccountName: es-sa
+      containers:
+        - name: elasticsearch
+          image: elasticsearch:8.6.2
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "0.5"
+              memory: "0.5Gi"
+          env:
+            - name: cluster.name
+              value: my-es-cluster
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: discovery.seed_hosts
+              value: "elasticsearch-0.elasticsearch,elasticsearch-1.elasticsearch,elasticsearch-2.elasticsearch"
+            - name: cluster.initial_master_nodes
+              value: "elasticsearch-0,elasticsearch-1,elasticsearch-2"
+            - name: ES_JAVA_OPTS
+              value: "-Xms2g -Xmx2g"
+          ports:
+            - containerPort: 9200
+              name: http
+            - containerPort: 9300
+              name: transport
+          volumeMounts: # Pod挂载的存储
+            - name: data
+              mountPath: /usr/share/elasticsearch/data     # 将容器的/xxx/data目录挂载出来
+            - name: elasticsearch-config
+              mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+              subPath: elasticsearch.yml
+      imagePullSecrets:
+        - name: default-secret
+      volumes:
+        - name: elasticsearch-config
+          configMap:
+            name: elasticsearch-config
+            items:
+              - key: elasticsearch.yml # 配合上面的配置文件挂载
+                path: elasticsearch.yml
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: csi-nas                   # 持久化存储的类型
