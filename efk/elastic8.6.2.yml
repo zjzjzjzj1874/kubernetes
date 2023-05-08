@@ -9,11 +9,22 @@ data:
     cluster.name: my-es-cluster
     node.name: ${HOSTNAME}
     network.host: 0.0.0.0
-    discovery.seed_hosts: elasticsearch-0.elasticsearch,elasticsearch-1.elasticsearch,elasticsearch-2.elasticsearch
+    discovery.seed_hosts: elasticsearch-0.devops,elasticsearch-1.devops,elasticsearch-2.devops
     cluster.initial_master_nodes: elasticsearch-0,elasticsearch-1,elasticsearch-2
-    xpack.security.authc.api_key.enabled: true
     xpack.security.enabled: false
     
+    # 单节点ssl证书生成后才能添加的环境变量
+#    xpack.security.transport.ssl.enabled: true
+#    xpack.security.transport.ssl.verification_mode: certificate
+#    xpack.security.transport.ssl.client_authentication: required
+#    xpack.security.transport.ssl.keystore.path: elastic-certificates.p12
+#    xpack.security.transport.ssl.truststore.path: elastic-certificates.p12
+#    xpack.security.transport.ssl.keystore.secure_password: ${SECURE_PASSWORD}
+#    xpack.security.transport.ssl.truststore.secure_password: ${SECURE_PASSWORD}
+
+#    xpack.security.http.ssl.enabled: true
+#    xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/keystore.p12
+#    xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/truststore.p12
 
 ---
 # es-service.yaml
@@ -58,6 +69,7 @@ spec:
       containers:
         - name: elasticsearch
           image: elasticsearch:8.6.2
+#          command: ["/bin/bash", "-c", "sleep 600s && /usr/local/bin/docker-entrypoint.sh"] # 调试模式,启动之前先sleep 600s,可以进入容器查询对应的状态
           resources:
             limits:
               cpu: "2"
@@ -66,18 +78,10 @@ spec:
               cpu: "0.5"
               memory: "0.5Gi"
           env:
-            - name: cluster.name
-              value: my-es-cluster
-            - name: node.name
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: discovery.seed_hosts
-              value: "elasticsearch-0.elasticsearch,elasticsearch-1.elasticsearch,elasticsearch-2.elasticsearch"
-            - name: cluster.initial_master_nodes
-              value: "elasticsearch-0,elasticsearch-1,elasticsearch-2"
             - name: ES_JAVA_OPTS
-              value: "-Xms2g -Xmx2g"
+              value: "-Xms500m -Xmx500m"
+            - name: SECURE_PASSWORD
+              value: NRAQ1234!
           ports:
             - containerPort: 9200
               name: http
@@ -86,12 +90,17 @@ spec:
           volumeMounts: # Pod挂载的存储
             - name: data
               mountPath: /usr/share/elasticsearch/data     # 将容器的/xxx/data目录挂载出来
+#            - name: certs-volume
+#              mountPath: /usr/share/elasticsearch/config/certs
             - name: elasticsearch-config
               mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
               subPath: elasticsearch.yml
       imagePullSecrets:
         - name: default-secret
       volumes:
+#        - name: certs-volume
+#          secret:
+#            secretName: elasticsearch-certs
         - name: elasticsearch-config
           configMap:
             name: elasticsearch-config
@@ -102,9 +111,9 @@ spec:
     - metadata:
         name: data
       spec:
-        accessModes:
-          - ReadWriteMany
         resources:
           requests:
             storage: 10Gi
         storageClassName: csi-nas                   # 持久化存储的类型
+        accessModes:
+          - ReadWriteMany

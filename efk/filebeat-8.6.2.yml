@@ -49,9 +49,9 @@ data:
     output.elasticsearch:
       index: "filebeat-k8s-dev-%{+yyyy.MM.dd}"
       hosts: ['${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
-      pipeline: "pipeline-json"
-      username: ${ELASTICSEARCH_USERNAME}
-      password: ${ELASTICSEARCH_PASSWORD}
+      #pipeline: "pipeline-json"
+      #username: ${ELASTICSEARCH_USERNAME}
+      #password: ${ELASTICSEARCH_PASSWORD}
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -77,22 +77,22 @@ spec:
         - name: default-secret
       containers:
         - name: filebeat
-          image: filebeat:7.9.3
+          image: filebeat:8.6.2
           args: [
             "-c", "/etc/filebeat.yml",
             "-e",
           ]
           env:
             - name: ELASTICSEARCH_HOST
-              value: 10.28.0.157
+              value: elasticsearch.devops
             - name: ELASTICSEARCH_PORT
               value: "9200"
-            - name: ELASTICSEARCH_USERNAME
-              value: elastic
-            - name: ELASTICSEARCH_PASSWORD
-              value: uIA2sOHYQvYfyUUgxr2R
+#            - name: ELASTICSEARCH_USERNAME
+#              value: elastic
+#            - name: ELASTICSEARCH_PASSWORD
+#              value:
             - name: KIBANA_HOST
-              value: elasticsearch.devops:5601
+              value: kibana.devops
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
