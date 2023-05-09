@@ -35,3 +35,23 @@
 - 如果证书有密码,去所有pod中执行
   `./bin/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password` => +密码
   `./bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password` => +密码
+
+### 尝试
+- 生成私钥文件和证书文件 `openssl req -x509 -newkey rsa:4096 -nodes -keyout private-key.pem -out certificate.pem -days 365`
+- 生成 PKCS12 格式的keystore文件 `openssl pkcs12 -export -in certificate.pem -inkey private-key.pem -out keystore.p12 -name my-keystore -passout pass:password`
+- 生成truststore文件 `openssl pkcs12 -in keystore.p12 -out truststore.p12 -nokeys -clcerts -passin pass:password -passout pass:password`
+
+
+
+
+
+
+### Ubuntu安装NFS
+- 安装nfs-kernel-server，将会自动安装nfs-common和rpcbind等依赖
+  `sudo apt-get install nfs-kernel-server`
+- 配置/etc/exports文件
+  `/mnt/{你的目录} *(rw,sync,no_root_squash,no_subtree_check)`
+- 重启nfs服务
+  `sudo /etc/init.d/nfs-kernel-server restart`
+- [参考](https://www.wpgdadatong.com/cn/blog/detail/45305)
+
