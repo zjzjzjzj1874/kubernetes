@@ -38,7 +38,7 @@
 
 ### 尝试
 - 生成私钥文件和证书文件 `openssl req -x509 -newkey rsa:4096 -nodes -keyout private-key.pem -out certificate.pem -days 365`
-- 生成 PKCS12 格式的keystore文件 `openssl pkcs12 -export -in certificate.pem -inkey private-key.pem -out keystore.p12 -name my-keystore -passout pass:password`
+- 生成PKCS12格式的keystore文件 `openssl pkcs12 -export -in certificate.pem -inkey private-key.pem -out keystore.p12 -name my-keystore -passout pass:password`
 - 生成truststore文件 `openssl pkcs12 -in keystore.p12 -out truststore.p12 -nokeys -clcerts -passin pass:password -passout pass:password`
 
 

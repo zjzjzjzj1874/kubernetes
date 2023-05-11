@@ -84,7 +84,7 @@ spec:
           ]
           env:
             - name: ELASTICSEARCH_HOST
-              value: 10.28.0.157
+              value: localhost
             - name: ELASTICSEARCH_PORT
               value: "9200"
             - name: ELASTICSEARCH_USERNAME
