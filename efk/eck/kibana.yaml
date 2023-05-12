@@ -1,0 +1,9 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana-prod
+spec:
+  version: 8.7.1
+  count: 1
+  elasticsearchRef:
+    name: es-prod
