@@ -7,8 +7,8 @@ spec:
   count: 1
   elasticsearchRef:
     name: es-dev
-  config:
-    i18n.locale: "zh-CN"
+#  config:
+#    i18n.locale: "zh-CN"
   http:
     tls:
       selfSignedCertificate:
