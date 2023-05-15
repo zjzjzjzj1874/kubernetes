@@ -1,0 +1,16 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana-prod
+spec:
+  version: 8.7.1
+  count: 1
+  elasticsearchRef:
+    name: es-prod
+  #  config:
+  #    i18n.locale: "zh-CN"
+  http:
+    tls:
+      selfSignedCertificate:
+        # 关闭https，使用http对外提供服务，否则需要配置证书【请参考官方文档】
+        disabled: true

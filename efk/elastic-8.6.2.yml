@@ -46,7 +46,7 @@ spec:
 
 ---
 # es-statefulset.yaml
-apiVersion: apps/v1
+apiVersion: appsStatefulSet/v1
 kind: StatefulSet
 metadata:
   namespace: devops

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bytebase
+  namespace: devops
+spec:
+  selector:
+    matchLabels:
+      app: bytebase
+  template:
+    metadata:
+      labels:
+        app: bytebase
+    spec:
+      containers:
+        - name: bytebase
+          image: bytebase/bytebase:2.0.0
+          imagePullPolicy: Always
+          env:
+            - name: PG_URL
+              value: 'postgresql://my_user:my_pwd@postgresql:5432/mydatabase'
+          args:
+            [
+              '--data',
+              '/var/opt/bytebase',
+              '--external-url',
+              'https://bytebase.example.com',
+              '--port',
+              '8080',
+            ]
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: data
+              mountPath: /var/opt/bytebase
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 300
+            periodSeconds: 300
+            timeoutSeconds: 60
+      volumes:
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bytebase-entrypoint
+  namespace: devops
+spec:
+  # Optional
+  type: LoadBalancer
+  selector:
+    app: bytebase
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
