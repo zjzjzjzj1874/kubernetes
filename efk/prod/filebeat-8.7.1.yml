@@ -189,7 +189,7 @@ spec:
             - name: ELASTICSEARCH_USERNAME
               value: elastic
             - name: ELASTICSEARCH_PASSWORD
-              value: ydzo2f57mBi935iOr041Hsi0
+              value: admin
             - name: ELASTIC_CLOUD_ID
               value:
             - name: ELASTIC_CLOUD_AUTH

@@ -90,7 +90,7 @@ spec:
             - name: ELASTICSEARCH_USERNAME
               value: elastic
             - name: ELASTICSEARCH_PASSWORD
-              value: uIA2sOHYQvYfyUUgxr2R
+              value: admin
             - name: KIBANA_HOST
               value: elasticsearch.devops:5601
             - name: NODE_NAME

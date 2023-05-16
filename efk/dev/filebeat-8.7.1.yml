@@ -86,7 +86,7 @@ spec:
             - name: ELASTICSEARCH_USERNAME
               value: elastic
             - name: ELASTICSEARCH_PASSWORD
-              value: Q1KMvhd717V4kJ4Xm38iK55g
+              value: admin
             - name: KIBANA_HOST
               value: kibana-dev-kb-http.elastic-system
             - name: NODE_NAME
