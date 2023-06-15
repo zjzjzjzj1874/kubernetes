@@ -1,15 +1,52 @@
-## 部署[ECK](https://www.elastic.co/guide/en/cloud-on-k8s/2.6/k8s-deploy-eck.html)
 
-- Install custom resource definitions: 
-  - `kubectl create -f https://download.elastic.co/downloads/eck/2.6.1/crds.yaml`
-  - 或者`wget https://download.elastic.co/downloads/eck/2.6.1/crds.yaml` && `kubectl create -f crds.yaml`
-- Install the operator with its RBAC rules: 
-  - `kubectl apply -f https://download.elastic.co/downloads/eck/2.6.1/operator.yaml`
-  - 或者`wget https://download.elastic.co/downloads/eck/2.6.1/operator.yaml` && `kubectl create -f operator.yaml`
-- 查看日志 `kubectl -n elastic-system logs -f statefulset.apps/elastic-operator`
+## 普通服务器部署filebeat收集日志
+* [docker-compose](./filebeat-docker-compose.yaml)文件
+* [filebeat.yaml](./filebeat-8.7.yaml)配置
 
-## 部署[ES cluster](https://www.elastic.co/guide/en/cloud-on-k8s/2.6/k8s-deploy-elasticsearch.html)
-- 启动ES
-  - `kubectl apply -f es.yaml`
-- 查看就行了
-- 如果存储不够,或者引擎不是csi-nas,就替换成自己的.
+### 配置ILM
+
+* 使用DevTools修改ILM:
+
+`PUT _ilm/policy/filebeat-dev`
+```json
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "min_age": "0ms",
+        "actions": {
+          "rollover": {
+            "max_size": "10gb",
+            "max_age": "5d"
+          },
+          "set_priority": {
+            "priority": 50
+          }
+        }
+      },
+      "warm": {
+        "min_age": "5d",
+        "actions": {
+          "forcemerge": {
+            "max_num_segments": 1
+          },
+          "set_priority": {
+            "priority": 25
+          },
+          "shrink": {
+            "number_of_shards": 1
+          }
+        }
+      },
+      "delete": {
+        "min_age": "5d",
+        "actions": {
+          "delete": {
+            "delete_searchable_snapshot": true
+          }
+        }
+      }
+    }
+  }
+}
+```

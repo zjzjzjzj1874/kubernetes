@@ -1,0 +1,30 @@
+# 收集普通服务器日志: => 需要在服务器上这个是filebeat的配置文件
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/*/*
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+
+setup.template.name: "filebeat-dev"
+setup.template.pattern: "filebeat-dev-*"
+setup.ilm.enabled: true
+setup.ilm.rollover_alias: "filebeat-dev"
+setup.ilm.policy_name: "filebeat-dev"
+setup.ilm.pattern: "{now/M{yyyy.MM}}-000001"
+
+processors:
+  - add_host_metadata: ~
+  - add_docker_metadata: ~
+  - add_cloud_metadata: ~
+
+setup.kibana:
+  host: "0.0.0.0:5601"
+output.elasticsearch:
+  hosts: ["0.0.0.0:9200"]
+  index: "filebeat-hjws-dev-%{+yyyy.MM.dd}"
+  username: elastic
+  password: changeme

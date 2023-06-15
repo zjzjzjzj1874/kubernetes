@@ -1,0 +1,16 @@
+version: '3.0'
+services:
+  filebeat:
+    container_name: filebeat
+    image: docker.elastic.co/beats/filebeat:8.7.1
+    user: root
+    privileged: true
+    environment:
+      - "strict.perms=false"
+      - "setup.kibana.host=0.0.0.0:5601"
+      - "output.elasticsearch.hosts=['0.0.0.0:9200']"
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /home/ubuntu/logs/:/var/log/:ro
+    restart: always
