@@ -7,9 +7,54 @@
 
 * 使用DevTools修改ILM:
 
-`PUT _ilm/policy/filebeat-dev`
+* es-8.7.1
 
-```json
+```shell
+  PUT _ilm/policy/filebeat-dev
+  {
+    "policy": {
+      "phases": {
+        "hot": {
+          "min_age": "0ms",
+          "actions": {
+            "rollover": {
+              "max_size": "10gb",
+              "max_age": "5d"
+            },
+            "set_priority": {
+              "priority": 50
+            }
+          }
+        },
+        "warm": {
+          "min_age": "5d",
+          "actions": {
+            "forcemerge": {
+              "max_num_segments": 1
+            },
+            "set_priority": {
+              "priority": 25
+            },
+            "shrink": {
+              "number_of_shards": 1
+            }
+          }
+        },
+        "delete": {
+          "min_age": "5d",
+          "actions": {
+            "delete": {
+              "delete_searchable_snapshot": true
+            }
+          }
+        }
+      }
+    }
+  }
+```
+  * es 7.9
+```shell
+PUT _ilm/policy/ilm-history-ilm-policy
 {
   "policy": {
     "phases": {
@@ -17,30 +62,16 @@
         "min_age": "0ms",
         "actions": {
           "rollover": {
-            "max_size": "10gb",
-            "max_age": "5d"
+            "max_age": "30d",
+            "max_size": "50gb"
           },
           "set_priority": {
-            "priority": 50
-          }
-        }
-      },
-      "warm": {
-        "min_age": "5d",
-        "actions": {
-          "forcemerge": {
-            "max_num_segments": 1
-          },
-          "set_priority": {
-            "priority": 25
-          },
-          "shrink": {
-            "number_of_shards": 1
+            "priority": null
           }
         }
       },
       "delete": {
-        "min_age": "5d",
+        "min_age": "90d",
         "actions": {
           "delete": {
             "delete_searchable_snapshot": true
@@ -51,6 +82,7 @@
   }
 }
 ```
+  
 
 这段代码是用来创建或更新一个名为"filebeat-dev"的索引生命周期策略（index lifecycle policy）。索引生命周期策略用于定义索引在不同阶段的行为，如热阶段（hot phase）、温暖阶段（warm
 phase）和删除阶段（delete phase）。
