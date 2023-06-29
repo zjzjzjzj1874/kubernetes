@@ -239,4 +239,14 @@ spec:
             # When filebeat runs as non-root user, this directory needs to be writable by group (g+w).
             path: /var/lib/filebeat-data
             type: DirectoryOrCreate
+      affinity: # 需要添加这样一条节点亲和性,否则在受限调度的节点上无法运行daemonset
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/role
+                    operator: NotIn
+                    values:
+                      - virtual-kubelet
+                      - edge
 ---

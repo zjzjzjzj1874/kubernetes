@@ -15,3 +15,16 @@
 - 配置Ingress,访问5601端口即可(我这里使用华为云,配置路由即可)
 - 配置[Filebeat收集器](https://www.elastic.co/guide/en/beats/filebeat/current/running-on-kubernetes.html)
   - `kubectl apply -f filebeat-8.7.1.yml`
+  - 注意:受限调度的节点上不会主动运行daemonset,所以需要添加一个节点亲和性
+  ```yaml
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/role
+                operator: NotIn
+                values:
+                - virtual-kubelet
+                - edge
+  ```
