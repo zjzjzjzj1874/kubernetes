@@ -151,6 +151,7 @@ data:
     output.elasticsearch:
       index: "filebeat-k8s-prod-%{+yyyy.MM.dd}"
       hosts: ['${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
+      pipeline: "pipeline-json"
       username: ${ELASTICSEARCH_USERNAME}
       password: ${ELASTICSEARCH_PASSWORD}
 ---

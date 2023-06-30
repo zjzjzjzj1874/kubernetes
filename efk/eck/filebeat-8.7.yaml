@@ -26,5 +26,6 @@ setup.kibana:
 output.elasticsearch:
   hosts: ["0.0.0.0:9200"]
   index: "filebeat-hjws-dev-%{+yyyy.MM.dd}"
+  pipeline: "pipeline-json"
   username: elastic
   password: changeme
