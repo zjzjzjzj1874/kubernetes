@@ -1,0 +1,57 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: milvus-ui
+  namespace: tools
+  labels:
+    app: milvus-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: milvus-ui
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: milvus-ui
+    spec:
+      containers:
+        - name: milvus-ui-dev
+          image: zilliz/attu:latest
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          env:
+            - name: HOST_URL
+              value: localhost:3000
+            - name: MILVUS_URL
+              value: localhost:19530
+          resources: {}
+          imagePullPolicy: Always
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: default-secret
+      schedulerName: default-scheduler
+  serviceName: milvus-ui
+  updateStrategy:
+    type: RollingUpdate
+  revisionHistoryLimit: 10
+
+---
+metadata:
+  name: milvus-ui
+  namespace: tools
+spec:
+  ports:
+    - name: milvus-ui-dev
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 33000
+  selector:
+    app: milvus-ui
+status:
+  loadBalancer: {}
+apiVersion: v1
+kind: Service
