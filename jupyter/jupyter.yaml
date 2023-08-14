@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyter-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jupyter
+  template:
+    metadata:
+      labels:
+        app: jupyter
+    spec:
+      containers:
+        - name: jupyter
+          image: jupyter/base-notebook
+          ports:
+            - containerPort: 8888
+          resources:
+            requests:
+              cpu: 0.5
+              memory: 1Gi
+            limits:
+              cpu: 1
+              memory: 2Gi
+          volumeMounts:
+            - name: notebooks
+              mountPath: /notebooks
+      volumes:
+        - name: notebooks
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter-service
+spec:
+  selector:
+    app: jupyter
+  ports:
+    - protocol: TCP
+      port: 8888
+      targetPort: 8888
+  type: NodePort
