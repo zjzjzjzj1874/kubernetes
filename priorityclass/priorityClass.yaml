@@ -1,0 +1,34 @@
+kind: PriorityClass
+apiVersion: scheduling.k8s.io/v1
+metadata:
+  name: priority-common-first
+value: 1000000
+globalDefault: false
+description: "Highest priority for common services"
+
+---
+kind: PriorityClass
+apiVersion: scheduling.k8s.io/v1
+metadata:
+  name: priority-common-second
+value: 100000
+globalDefault: false
+description: "Medium priority for common services"
+
+---
+kind: PriorityClass
+apiVersion: scheduling.k8s.io/v1
+metadata:
+  name: priority-common-third
+value: 10000
+globalDefault: false
+description: "Low priority for common services"
+
+---
+kind: PriorityClass
+apiVersion: scheduling.k8s.io/v1
+metadata:
+  name: priority-common-forth
+value: 1000
+globalDefault: false
+description: "Lower priority for common services"
